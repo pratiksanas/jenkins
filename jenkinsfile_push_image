@@ -1,0 +1,30 @@
+pipeline {
+    agent {label "pratik"}
+    
+    stages {
+        stage("code"){
+            steps{
+                echo "This is cloning the code"
+                git url:"https://github.com/pratiksanas/django-notes-app.git",branch:"main"
+                echo "code cloning successfully"
+            }
+        }
+        stage("build"){
+            steps{
+                echo "This is building the code"
+                sh "docker build -t notes-app:latest ."
+            }
+        }
+        stage("test"){
+            steps{
+                echo "This is testing the code"
+            }
+        }
+        stage("deploy"){
+            steps{
+                echo "This is deploying the code"
+                sh "docker run -d -p 8000:8000 notes-app:latest"
+            }
+        }
+    }
+}
