@@ -1,5 +1,5 @@
 pipeline {
-    agent {label "pratik"}
+    agent {label "agent-pratik"}
     
     stages {
         stage("code"){
@@ -18,6 +18,17 @@ pipeline {
         stage("test"){
             steps{
                 echo "This is testing the code"
+            }
+        }
+        stage("push to dockerhub") {
+            steps {
+                echo "This is deploying the code"
+        
+                withCredentials([usernamePassword(credentialsId: 'dockerhubCred', usernameVariable: 'dockerHubUser', passwordVariable: 'dockerHubPass')]) {
+                    sh "docker login -u ${env.dockerHubUser} -p ${env.dockerHubPass}"
+                    sh "docker tag notes-app:latest ${env.dockerHubUser}/notes-app:latest"
+                    sh "docker push ${env.dockerHubUser}/notes-app:latest"
+                }
             }
         }
         stage("deploy"){
